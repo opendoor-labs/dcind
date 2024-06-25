@@ -3,7 +3,7 @@
 
 LOG_FILE=${LOG_FILE:-/tmp/docker.log}
 SKIP_PRIVILEGED=${SKIP_PRIVILEGED:-false}
-STARTUP_TIMEOUT=${STARTUP_TIMEOUT:-20}
+STARTUP_TIMEOUT=${STARTUP_TIMEOUT:-60}
 DOCKER_DATA_ROOT=${DOCKER_DATA_ROOT:-/scratch/docker}
 
 sanitize_cgroups() {
@@ -106,6 +106,10 @@ start_docker() {
 
     if ! timeout ${STARTUP_TIMEOUT} bash -ce 'while true; do try_start && break; done'; then
       echo Docker failed to start within ${STARTUP_TIMEOUT} seconds.
+      echo "Logs"
+      echo "------------------------------------------------------------------"
+      cat $LOG_FILE
+      echo "------------------------------------------------------------------"
       return 1
     fi
   else
